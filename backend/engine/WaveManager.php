@@ -1,16 +1,14 @@
 <?php
-// engine/WaveManager.php
-
 class WaveManager {
     private int $currentWave = 1;
     private float $spawnTimer = 0;
-    private float $timeBetweenWaves = 5.0; // seconds
+    private float $timeBetweenWaves = 5.0; 
     private bool $waveInProgress = false;
     private array $currentWaveZombies = [];
     
     private array $waveDefinitions = [
         1 => [
-            'basic_zombie' => [0, 2, 4]  // lanes
+            'basic_zombie' => [0, 2, 4]
         ],
         2 => [
             'basic_zombie' => [0, 1, 2, 3, 4]

@@ -1,0 +1,726 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --green-deep: #2d6a4f;
+  --green-mid: #4a7c59;
+  --green-light: #52b788;
+  --yellow: #ffd166;
+  --orange: #fb8500;
+  --red: #e63946;
+  --purple: #7b2cbf;
+  --night-1: #1a1a2e;
+  --night-2: #3a2e4a;
+  --night-3: #16213e;
+  --text-dark: #2d2327;
+  --text-light: #fefae0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Quicksand", sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── BACKGROUNDS ── */
+.bg-day {
+  background: radial-gradient(
+    ellipse at 30% 20%,
+    #ffd166 0%,
+    #4a7c59 40%,
+    #2d6a4f 100%
+  );
+  transition: opacity 0.8s ease;
+}
+.bg-night {
+  background: radial-gradient(
+    ellipse at 70% 20%,
+    #3a2e4a 0%,
+    #1a1a2e 50%,
+    #16213e 100%
+  );
+  transition: opacity 0.8s ease;
+}
+
+/* ── SCENE WRAPPER ── */
+#scene {
+  position: fixed;
+  inset: 0;
+  transition: background 0.8s ease;
+}
+#scene.day {
+  background: radial-gradient(
+    ellipse at 30% 20%,
+    #ffd166 0%,
+    #4a7c59 40%,
+    #2d6a4f 100%
+  );
+}
+#scene.night {
+  background: radial-gradient(
+    ellipse at 70% 20%,
+    #3a2e4a 0%,
+    #1a1a2e 50%,
+    #16213e 100%
+  );
+}
+
+/* ── FLOATING ELEMENTS ── */
+.floaters {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.floater {
+  position: absolute;
+  font-size: 2rem;
+  opacity: 0.55;
+  animation:
+    floatY 20s ease-in-out infinite,
+    floatX 30s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes floatY {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-28px);
+  }
+}
+@keyframes floatX {
+  0%,
+  100% {
+    transform: translateX(0px);
+  }
+  33% {
+    transform: translateX(10px);
+  }
+  66% {
+    transform: translateX(-8px);
+  }
+}
+.floater.bat {
+  animation: batFly 8s linear infinite;
+  opacity: 0.5;
+}
+@keyframes batFly {
+  0% {
+    transform: translateX(-80px) translateY(0);
+  }
+  50% {
+    transform: translateX(20px) translateY(-20px);
+  }
+  100% {
+    transform: translateX(-80px) translateY(0);
+  }
+}
+.floater.zombie-hand {
+  animation: handEmerge 6s ease-in-out infinite;
+}
+@keyframes handEmerge {
+  0%,
+  100% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  40%,
+  60% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+}
+.floater.cloud {
+  font-size: 3rem;
+  animation: cloudDrift 40s linear infinite;
+}
+@keyframes cloudDrift {
+  0% {
+    transform: translateX(-120px);
+  }
+  100% {
+    transform: translateX(calc(100vw + 120px));
+  }
+}
+.sun-pulse {
+  position: absolute;
+  font-size: 3.5rem;
+  animation: sunPulse 4s ease-in-out infinite;
+}
+@keyframes sunPulse {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.12) rotate(8deg);
+  }
+}
+
+/* ── 3D FLIP ── */
+.flip-container {
+  perspective: 1600px;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+.flip-card {
+  position: relative;
+  width: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.flip-card.flipped {
+  transform: rotateY(180deg);
+}
+.card-face {
+  width: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.card-face.back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: rotateY(180deg);
+}
+
+/* ── GLASSMORPHISM ── */
+.glass-day {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 2px solid rgba(255, 209, 102, 0.35);
+  border-radius: 32px;
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+.glass-night {
+  background: rgba(30, 20, 40, 0.25);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 2px solid rgba(123, 44, 191, 0.35);
+  border-radius: 32px;
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(123, 44, 191, 0.15) inset;
+}
+
+/* ── TYPOGRAPHY ── */
+.font-game {
+  font-family: "Luckiest Guy", cursive;
+}
+.font-label {
+  font-family: "Nunito", sans-serif;
+}
+.font-input {
+  font-family: "Quicksand", sans-serif;
+}
+
+/* ── INPUTS ── */
+.input-wrap {
+  position: relative;
+  margin-bottom: 1rem;
+}
+.input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+  z-index: 1;
+  pointer-events: none;
+}
+.form-input {
+  width: 100%;
+  padding: 0.75rem 2.8rem 0.75rem 2.8rem;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 14px;
+  font-family: "Quicksand", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  outline: none;
+  transition: all 0.2s ease;
+}
+.form-input::placeholder {
+  color: rgba(45, 35, 39, 0.5);
+  font-weight: 500;
+}
+.form-input:focus {
+  border-color: var(--green-light);
+  background: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.25);
+  transform: scale(1.015);
+}
+.form-input.night-input {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(123, 44, 191, 0.3);
+  color: var(--text-light);
+}
+.form-input.night-input::placeholder {
+  color: rgba(254, 250, 224, 0.4);
+}
+.form-input.night-input:focus {
+  border-color: var(--purple);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(123, 44, 191, 0.25);
+}
+.form-input.valid {
+  border-color: var(--green-light) !important;
+}
+.form-input.invalid {
+  border-color: var(--red) !important;
+  animation: shake 0.3s ease;
+}
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0) scale(1.015);
+  }
+  20% {
+    transform: translateX(-5px) scale(1.015);
+  }
+  40% {
+    transform: translateX(5px) scale(1.015);
+  }
+  60% {
+    transform: translateX(-3px) scale(1.015);
+  }
+  80% {
+    transform: translateX(3px) scale(1.015);
+  }
+}
+
+.input-status {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+.eye-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 1rem;
+  color: rgba(45, 35, 39, 0.5);
+  background: none;
+  border: none;
+  padding: 0;
+  z-index: 2;
+}
+.eye-toggle.night {
+  color: rgba(254, 250, 224, 0.5);
+}
+
+/* ── STRENGTH BAR ── */
+.strength-bar-wrap {
+  height: 5px;
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+.strength-bar {
+  height: 100%;
+  border-radius: 999px;
+  transition:
+    width 0.35s ease,
+    background 0.35s ease;
+  width: 0%;
+}
+.strength-label {
+  font-family: "Nunito", sans-serif;
+  font-size: 0.72rem;
+  margin-top: 3px;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+/* ── PASSWORD CHECKLIST ── */
+.pwd-checklist {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+}
+.pwd-check-item {
+  font-family: "Nunito", sans-serif;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+  transition: color 0.2s;
+}
+.pwd-check-item.met {
+  color: var(--green-light);
+}
+.pwd-check-item.unmet {
+  color: rgba(254, 250, 224, 0.55);
+}
+
+/* ── BUTTONS ── */
+.btn-primary {
+  width: 100%;
+  padding: 0.85rem;
+  background: linear-gradient(135deg, var(--green-deep), var(--green-mid));
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-family: "Luckiest Guy", cursive;
+  font-size: 1.15rem;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 6px 20px rgba(45, 106, 79, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary:hover {
+  transform: scale(1.04) rotate(0.5deg);
+  box-shadow: 0 10px 28px rgba(45, 106, 79, 0.5);
+}
+.btn-primary:active {
+  transform: scale(0.97);
+}
+.btn-primary.night-btn {
+  background: linear-gradient(135deg, var(--purple), #5a189a);
+  box-shadow: 0 6px 20px rgba(123, 44, 191, 0.4);
+}
+.btn-primary.night-btn:hover {
+  box-shadow: 0 10px 28px rgba(123, 44, 191, 0.5);
+}
+
+.btn-social {
+  width: 100%;
+  padding: 0.65rem;
+  border-radius: 12px;
+  font-family: "Nunito", sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-social.night {
+  color: var(--text-light);
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+}
+.btn-social:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: scale(1.02);
+}
+
+/* ── TOGGLE SWITCH ── */
+.toggle-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.toggle-input {
+  display: none;
+}
+.toggle-slider {
+  width: 44px;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 999px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.toggle-slider::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+.toggle-input:checked + .toggle-slider {
+  background: var(--green-light);
+}
+.toggle-input:checked + .toggle-slider::after {
+  transform: translateX(20px);
+}
+.toggle-input:checked + .toggle-slider.night-toggle {
+  background: var(--purple);
+}
+
+/* ── CUSTOM CHECKBOX ── */
+.custom-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+.check-box {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  margin-top: 1px;
+}
+.check-box.checked {
+  background: var(--green-light);
+  border-color: var(--green-light);
+}
+.check-box.night-check.checked {
+  background: var(--purple);
+  border-color: var(--purple);
+}
+
+/* ── CHAR COUNTER ── */
+.char-counter {
+  font-family: "Nunito", sans-serif;
+  font-size: 0.72rem;
+  text-align: right;
+  margin-top: 2px;
+}
+
+/* ── AVAILABILITY STATUS ── */
+.avail-status {
+  font-family: "Nunito", sans-serif;
+  font-size: 0.75rem;
+  margin-top: 3px;
+  font-style: italic;
+  min-height: 16px;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 1rem 0;
+}
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.25);
+}
+.divider span {
+  font-family: "Nunito", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 1px;
+}
+
+/* ── LOADING SPINNER ── */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── TOAST ── */
+#toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.toast {
+  padding: 14px 18px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  font-family: "Nunito", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 300px;
+  animation: toastIn 0.3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  border: 2px solid;
+}
+.toast.success {
+  background: white;
+  border-color: var(--green-light);
+  color: var(--text-dark);
+}
+.toast.error {
+  background: white;
+  border-color: var(--red);
+  color: var(--text-dark);
+}
+.toast.info {
+  background: white;
+  border-color: var(--yellow);
+  color: var(--text-dark);
+}
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes toastOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+}
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 8000;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.modal-box {
+  background: white;
+  border-radius: 24px;
+  padding: 2rem;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+  transform: scale(0.95);
+  transition: transform 0.2s;
+}
+.modal-overlay.open .modal-box {
+  transform: scale(1);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .game-title {
+    font-size: 2.4rem !important;
+  }
+  .flip-container {
+    max-width: 96vw;
+  }
+  .floater {
+    font-size: 1.4rem;
+  }
+}
+
+/* ── CONFETTI ── */
+.confetti-piece {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 9998;
+  animation: confettiFall linear forwards;
+}
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* honeypot */
+.hp-field {
+  display: none !important;
+}
+
+/* ── LINK ── */
+.link-switch {
+  font-family: "Nunito", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: opacity 0.15s;
+}
+.link-switch:hover {
+  opacity: 0.75;
+}
+
+/* ── SUGGESTION CHIPS ── */
+.suggestion-chip {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-family: "Nunito", sans-serif;
+  font-weight: 700;
+  background: rgba(123, 44, 191, 0.2);
+  color: var(--purple);
+  border: 1px solid rgba(123, 44, 191, 0.35);
+  cursor: pointer;
+  margin-right: 4px;
+  margin-top: 4px;
+  transition: background 0.15s;
+}
+.suggestion-chip:hover {
+  background: rgba(123, 44, 191, 0.35);
+}

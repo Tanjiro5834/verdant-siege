@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verdant Siege — Enter the Garden</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:wght@400;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="./assets/css/auth.css">
+</head>
+<body>
+
+<!-- SCENE BACKGROUND -->
+<div id="scene" class="day"></div>
+
+<!-- DAY FLOATERS -->
+<div id="day-floaters" class="floaters">
+  <div class="sun-pulse" style="top:6%; left:12%">☀️</div>
+  <div class="floater" style="top:18%; left:5%; animation-duration:18s">🌻</div>
+  <div class="floater" style="top:72%; left:3%; animation-duration:22s; font-size:2.5rem">🌿</div>
+  <div class="floater" style="top:55%; left:88%; animation-duration:26s">🌻</div>
+  <div class="floater" style="top:82%; left:80%; animation-duration:20s; font-size:1.6rem">🟡</div>
+  <div class="floater" style="top:35%; left:92%; animation-duration:16s">🪴</div>
+  <div class="floater cloud" style="top:8%; animation-duration:45s">☁️</div>
+  <div class="floater cloud" style="top:22%; animation-duration:60s; animation-delay:-20s; font-size:2.4rem">☁️</div>
+  <div class="floater" style="top:90%; left:40%; animation-duration:19s; font-size:1.4rem">🌱</div>
+  <div class="floater" style="top:45%; left:1%; animation-duration:28s; font-size:1.5rem">✨</div>
+</div>
+
+<!-- NIGHT FLOATERS -->
+<div id="night-floaters" class="floaters" style="display:none">
+  <div class="floater" style="top:5%; left:15%; font-size:3.5rem; animation-duration:6s">🌕</div>
+  <div class="floater bat" style="top:25%; left:70%">🦇</div>
+  <div class="floater bat" style="top:40%; left:20%; animation-delay:-3s; font-size:1.5rem">🦇</div>
+  <div class="floater zombie-hand" style="top:82%; left:10%">🧟</div>
+  <div class="floater zombie-hand" style="top:85%; left:30%; animation-delay:-2s; font-size:1.5rem">✋</div>
+  <div class="floater zombie-hand" style="top:88%; left:75%; animation-delay:-4s">🧟</div>
+  <div class="floater" style="top:60%; left:85%; animation-duration:14s; opacity:0.4">👻</div>
+  <div class="floater" style="top:15%; left:80%; animation-duration:22s; opacity:0.3">👻</div>
+  <div class="floater" style="top:75%; left:55%; animation-duration:30s; font-size:1.6rem">🪦</div>
+  <div class="floater" style="top:70%; left:5%; animation-duration:35s; font-size:1.6rem; opacity:0.5">💀</div>
+  <div class="floater" style="top:30%; left:5%; animation-duration:18s; font-size:1.2rem; opacity:0.6">⭐</div>
+  <div class="floater" style="top:10%; left:45%; animation-duration:24s; font-size:1rem; opacity:0.5">✨</div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 py-10">
+
+  <!-- TITLE -->
+  <div class="text-center mb-6">
+    <h1 id="main-title" class="font-game game-title text-5xl md:text-6xl text-white drop-shadow-2xl" style="letter-spacing:2px; text-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 40px rgba(255,209,102,0.5)">
+      🌻 VERDANT SIEGE
+    </h1>
+    <p id="sub-title" class="font-label text-sm font-bold uppercase tracking-widest mt-1" style="color:rgba(255,255,255,0.7)">
+      Plants vs Zombies — Multiplayer Arena
+    </p>
+  </div>
+
+  <!-- 3D FLIP CONTAINER -->
+  <div class="flip-container">
+    <div class="flip-card" id="flip-card">
+
+      <!-- ===== LOGIN FACE ===== -->
+      <div class="card-face front">
+        <div class="glass-day p-7 md:p-9">
+          <h2 class="font-game text-2xl text-center mb-1" style="color:var(--green-deep); letter-spacing:1px">
+            🌞 Enter the Garden
+          </h2>
+          <p class="font-label text-center text-xs font-bold uppercase tracking-wider mb-6" style="color:rgba(45,35,39,0.55)">Sign in to your plant army</p>
+
+          <!-- Social Login -->
+          <div class="flex flex-col gap-2 mb-4">
+            <button class="btn-social" onclick="socialLogin('discord')">🎮 Continue with Discord</button>
+            <div class="flex gap-2">
+              <button class="btn-social flex-1" onclick="socialLogin('google')">🌐 Google</button>
+              <button class="btn-social flex-1" onclick="socialLogin('apple')">🍎 Apple</button>
+            </div>
+          </div>
+          <div class="divider"><span>OR</span></div>
+
+          <!-- Login Form -->
+          <form id="login-form" novalidate onsubmit="handleLogin(event)">
+            <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" />
+
+            <!-- Username/Email -->
+            <div class="input-wrap">
+              <span class="input-icon" id="login-uicon">🌞</span>
+              <input type="text" id="login-username" class="form-input" placeholder="Username or Email Address"
+                     autocomplete="username" aria-label="Username or Email"
+                     oninput="loginFieldValidate(this)" />
+              <span class="input-status" id="login-u-status"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="input-wrap">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="login-password" class="form-input" placeholder="Password"
+                     autocomplete="current-password" aria-label="Password"
+                     oninput="loginPwdValidate(this)" style="padding-right:2.8rem" />
+              <button type="button" class="eye-toggle" onclick="toggleEye('login-password', this)" aria-label="Toggle password visibility">
+                <i class="fa fa-eye"></i>
+              </button>
+            </div>
+
+            <!-- Strength bar (login shows minimal) -->
+            <div class="mb-3">
+              <div class="strength-bar-wrap">
+                <div class="strength-bar" id="login-strength-bar"></div>
+              </div>
+              <p class="strength-label" id="login-strength-label" style="color:rgba(45,35,39,0.5)"></p>
+            </div>
+
+            <!-- Remember Me + Forgot -->
+            <div class="flex items-center justify-between mb-5">
+              <label class="toggle-wrap cursor-pointer" onclick="toggleRemember()">
+                <input type="checkbox" class="toggle-input" id="rememberMe" />
+                <div class="toggle-slider" id="remember-slider"></div>
+                <span class="font-label text-xs font-bold" style="color:var(--text-dark)">Remember me</span>
+              </label>
+              <button type="button" class="font-label text-xs font-bold underline cursor-pointer bg-transparent border-none" style="color:var(--green-deep)" onclick="openForgotModal()">
+                Lost your password? 🌱
+              </button>
+            </div>
+
+            <button type="submit" class="btn-primary" id="login-btn">
+              🌿 ENTER THE GARDEN
+            </button>
+
+            <p class="text-center mt-4 font-label text-xs font-bold" style="color:rgba(45,35,39,0.6)">
+              New here?
+              <button type="button" class="link-switch" style="color:var(--green-deep)" onclick="flipToRegister()">
+                Create an account 🧟
+              </button>
+            </p>
+
+            <!-- Demo mode -->
+            <p class="text-center mt-2">
+              <button type="button" class="font-label text-xs underline bg-transparent border-none cursor-pointer" style="color:rgba(45,35,39,0.4)" onclick="enableDemoMode()">
+                Try demo mode
+              </button>
+            </p>
+          </form>
+        </div>
+      </div>
+
+      <!-- ===== REGISTER FACE ===== -->
+      <div class="card-face back">
+        <div class="glass-night p-7 md:p-9">
+          <h2 class="font-game text-2xl text-center mb-1" style="color:var(--yellow); letter-spacing:1px">
+            🧟 Join the Battle
+          </h2>
+          <p class="font-label text-center text-xs font-bold uppercase tracking-wider mb-5" style="color:rgba(254,250,224,0.5)">Create your warrior account</p>
+
+          <!-- Social Login Night -->
+          <div class="flex flex-col gap-2 mb-4">
+            <button class="btn-social night" onclick="socialLogin('discord')">🎮 Continue with Discord</button>
+            <div class="flex gap-2">
+              <button class="btn-social night flex-1" onclick="socialLogin('google')">🌐 Google</button>
+              <button class="btn-social night flex-1" onclick="socialLogin('apple')">🍎 Apple</button>
+            </div>
+          </div>
+          <div class="divider"><span>OR</span></div>
+
+          <form id="register-form" novalidate onsubmit="handleRegister(event)">
+            <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" />
+
+            <!-- Username -->
+            <div class="input-wrap">
+              <span class="input-icon">👤</span>
+              <input type="text" id="reg-username" class="form-input night-input" placeholder="Choose a username"
+                     maxlength="20" autocomplete="username" aria-label="Username"
+                     oninput="regUsernameInput(this)" />
+              <span class="input-status" id="reg-u-status"></span>
+            </div>
+            <div class="flex justify-between items-center mb-1">
+              <p class="avail-status" id="reg-avail" style="color:rgba(254,250,224,0.5)"></p>
+              <span class="char-counter" id="reg-u-counter" style="color:rgba(254,250,224,0.4)">0/20</span>
+            </div>
+            <div id="reg-suggestions" class="mb-2"></div>
+
+            <!-- Email -->
+            <div class="input-wrap">
+              <span class="input-icon">📧</span>
+              <input type="email" id="reg-email" class="form-input night-input" placeholder="your@email.com"
+                     maxlength="100" autocomplete="email" aria-label="Email"
+                     oninput="regEmailInput(this)" />
+              <span class="input-status" id="reg-e-status"></span>
+            </div>
+            <p class="font-label text-xs mb-3" style="color:rgba(254,250,224,0.35); font-style:italic">We'll send a verification link</p>
+
+            <!-- Password -->
+            <div class="input-wrap">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="reg-password" class="form-input night-input" placeholder="Password"
+                     autocomplete="new-password" aria-label="Password"
+                     oninput="regPwdInput(this)" style="padding-right:2.8rem" />
+              <button type="button" class="eye-toggle night" onclick="toggleEye('reg-password', this)" aria-label="Toggle">
+                <i class="fa fa-eye"></i>
+              </button>
+            </div>
+            <div class="strength-bar-wrap mb-1">
+              <div class="strength-bar" id="reg-strength-bar"></div>
+            </div>
+            <p class="strength-label mb-2" id="reg-strength-label" style="color:rgba(254,250,224,0.5)"></p>
+            <div class="pwd-checklist mb-3" id="pwd-checklist">
+              <div class="pwd-check-item unmet" id="chk-len">☐ At least 6 characters</div>
+              <div class="pwd-check-item unmet" id="chk-num">☐ Contains a number (0-9)</div>
+              <div class="pwd-check-item unmet" id="chk-upper">☐ Contains uppercase letter (A-Z)</div>
+              <div class="pwd-check-item unmet" id="chk-special">☐ Contains special character (!@#$%^&*)</div>
+              <div class="pwd-check-item unmet" id="chk-nouname">☐ Doesn't contain your username</div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="input-wrap">
+              <span class="input-icon">🔐</span>
+              <input type="password" id="reg-confirm" class="form-input night-input" placeholder="Confirm password"
+                     autocomplete="new-password" aria-label="Confirm password"
+                     oninput="regConfirmInput(this)" style="padding-right:2.8rem" />
+              <button type="button" class="eye-toggle night" onclick="toggleEye('reg-confirm', this)" aria-label="Toggle">
+                <i class="fa fa-eye"></i>
+              </button>
+            </div>
+            <p class="avail-status mb-2" id="confirm-status" style="color:rgba(254,250,224,0.5)"></p>
+
+            <!-- DOB -->
+            <div class="input-wrap">
+              <span class="input-icon">🎂</span>
+              <input type="date" id="reg-dob" class="form-input night-input"
+                     aria-label="Date of birth"
+                     min="1900-01-01"
+                     title="You must be at least 13 to play (COPPA compliance)" />
+            </div>
+
+            <!-- Referral -->
+            <div class="input-wrap mb-4">
+              <span class="input-icon">🎁</span>
+              <input type="text" id="reg-referral" class="form-input night-input" placeholder="Referral code (optional)"
+                     oninput="checkReferral(this)" />
+              <span class="input-status" id="ref-status"></span>
+            </div>
+            <p class="font-label text-xs mb-4" id="ref-bonus" style="color:rgba(254,250,224,0.4); font-style:italic; display:none">
+              🎉 +100 coins for both of you!
+            </p>
+
+            <!-- Terms -->
+            <div class="mb-3">
+              <label class="custom-check" onclick="toggleCheck('terms-check', 'terms-hidden')">
+                <div class="check-box night-check" id="terms-check"></div>
+                <span class="font-label text-xs font-bold" style="color:rgba(254,250,224,0.7)">
+                  I agree to the <button type="button" class="underline bg-transparent border-none cursor-pointer" style="color:var(--yellow)" onclick="openTermsModal(event)">Terms of Service</button> and <button type="button" class="underline bg-transparent border-none cursor-pointer" style="color:var(--yellow)" onclick="openTermsModal(event)">Privacy Policy</button>
+                </span>
+              </label>
+              <input type="checkbox" id="terms-hidden" class="hp-field" />
+            </div>
+
+            <!-- Newsletter -->
+            <div class="mb-5">
+              <label class="custom-check" onclick="toggleCheck('news-check', 'news-hidden')">
+                <div class="check-box night-check" id="news-check"></div>
+                <span class="font-label text-xs font-semibold" style="color:rgba(254,250,224,0.5)">
+                  🎁 Get 50 free coins — send me game updates!
+                </span>
+              </label>
+              <input type="checkbox" id="news-hidden" class="hp-field" />
+            </div>
+
+            <button type="submit" class="btn-primary night-btn" id="reg-btn">
+              🧟 JOIN THE SIEGE
+            </button>
+
+            <p class="text-center mt-4 font-label text-xs font-bold" style="color:rgba(254,250,224,0.5)">
+              Already planted?
+              <button type="button" class="link-switch" style="color:var(--yellow)" onclick="flipToLogin()">
+                Sign in 🌻
+              </button>
+            </p>
+          </form>
+        </div>
+      </div>
+
+    </div><!-- /flip-card -->
+  </div><!-- /flip-container -->
+
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<!-- FORGOT PASSWORD MODAL -->
+<div class="modal-overlay" id="forgot-modal" role="dialog" aria-modal="true" aria-label="Forgot Password">
+  <div class="modal-box">
+    <h3 class="font-game text-xl mb-1" style="color:var(--green-deep)">🌱 Reset Your Password</h3>
+    <p class="font-label text-xs text-gray-500 mb-4">Enter your email and we'll send a reset link.</p>
+    <div class="input-wrap mb-4">
+      <span class="input-icon" style="color:var(--green-deep)">📧</span>
+      <input type="email" id="forgot-email" class="form-input" placeholder="your@email.com" style="background:rgba(0,0,0,0.04); color:#2d2327" />
+    </div>
+    <!-- Simple puzzle captcha shown after failures -->
+    <div id="captcha-area" style="display:none" class="mb-4 p-3 bg-green-50 rounded-xl border border-green-200">
+      <p class="font-label text-xs font-bold text-green-800 mb-2">Click all 🌻 to prove you're human:</p>
+      <div id="captcha-grid" class="flex gap-2 flex-wrap"></div>
+      <p class="font-label text-xs text-green-700 mt-1" id="captcha-msg"></p>
+    </div>
+    <div class="flex gap-3">
+      <button class="btn-primary flex-1" style="font-size:0.9rem; padding:0.65rem" onclick="sendReset()">Send Reset Link 🌿</button>
+      <button class="btn-primary flex-1" style="font-size:0.9rem; padding:0.65rem; background:rgba(0,0,0,0.1); color:#333; box-shadow:none" onclick="closeModal('forgot-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- TERMS MODAL -->
+<div class="modal-overlay" id="terms-modal" role="dialog" aria-modal="true" aria-label="Terms of Service">
+  <div class="modal-box" style="max-height:80vh; overflow-y:auto">
+    <h3 class="font-game text-xl mb-3" style="color:var(--purple)">📜 Terms of Service</h3>
+    <div class="font-label text-xs text-gray-600 space-y-2" style="line-height:1.7">
+      <p><strong>1. Acceptance.</strong> By creating an account you agree to these terms and our Privacy Policy.</p>
+      <p><strong>2. Age Requirement.</strong> You must be at least 13 years old (COPPA compliance). Parents or guardians must approve accounts for users under 18.</p>
+      <p><strong>3. Account Security.</strong> You are responsible for maintaining your account credentials. Do not share your password.</p>
+      <p><strong>4. Fair Play.</strong> Cheating, hacking, or exploiting bugs is strictly prohibited and may result in a permanent ban.</p>
+      <p><strong>5. Content Policy.</strong> Abusive, hateful, or inappropriate usernames and in-game content will be removed and accounts suspended.</p>
+      <p><strong>6. Privacy.</strong> We collect gameplay data to improve the experience. We never sell your personal data to third parties.</p>
+      <p><strong>7. Modifications.</strong> We reserve the right to modify these terms with 30 days notice.</p>
+    </div>
+    <button class="btn-primary mt-5" style="font-size:0.9rem; padding:0.65rem; background:linear-gradient(135deg,var(--purple),#5a189a)" onclick="closeModal('terms-modal')">Got it! 🌱</button>
+  </div>
+</div>
+
+<script src="./js/auth.js"></script>
+</body>
+</html>

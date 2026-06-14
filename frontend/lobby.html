@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verdant Siege — Lobby</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:wght@400;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="./assets/css/lobby.css">
+</head>
+<body>
+
+<!-- AMBIENT PARTICLES (JS injected) -->
+<div class="bg-particles" id="bg-particles"></div>
+
+<!-- ══════ NAVBAR ══════ -->
+<nav id="navbar">
+  <div class="nav-logo">🌻 VERDANT SIEGE</div>
+
+  <div class="flex items-center gap-2">
+    <!-- Coins -->
+    <div class="nav-coins">
+      <span>🪙</span><span id="coin-count">4,250</span>
+    </div>
+    <!-- Nav buttons -->
+    <button class="nav-btn" onclick="openModal('shop-modal')">
+      <i class="fa fa-store" style="color:var(--yellow)"></i>
+      <span class="hidden sm:inline">Shop</span>
+    </button>
+    <button class="nav-btn" onclick="openModal('leaderboard-modal')">
+      <i class="fa fa-trophy" style="color:var(--yellow)"></i>
+      <span class="hidden sm:inline">Leaderboard</span>
+    </button>
+    <button class="nav-btn" onclick="openModal('settings-modal')">
+      <i class="fa fa-gear" style="color:var(--text-muted)"></i>
+    </button>
+    <div style="width:1px; height:24px; background:rgba(255,255,255,0.1); margin:0 4px"></div>
+    <div style="display:flex; align-items:center; gap:8px; cursor:pointer" onclick="openModal('profile-modal')">
+      <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--green-light),var(--purple));display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🌻</div>
+      <span class="font-label text-sm font-bold hidden sm:inline" style="color:var(--text-light)">PlantMaster</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════ BATTLEFIELD HEADER (signature) ══════ -->
+<div id="battlefield">
+  <!-- Marching entities, sun drops injected by JS -->
+</div>
+
+<!-- ══════ MAIN GRID ══════ -->
+<div id="main-grid">
+
+  <!-- ═══ LEFT COLUMN ═══ -->
+  <div id="left-col" style="display:flex; flex-direction:column; gap:14px;">
+
+    <!-- Profile Card -->
+    <div class="glass p-5">
+      <p class="section-eyebrow">Your Profile</p>
+      <div style="display:flex; align-items:center; gap:14px; margin-bottom:14px;">
+        <div class="avatar-ring">
+          <div class="avatar-inner">🌻</div>
+        </div>
+        <div>
+          <p class="font-label font-bold" style="font-size:1rem; color:var(--text-light); margin:0 0 4px">PlantMaster</p>
+          <div class="rank-badge">⚔️ Diamond II</div>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div style="display:flex; gap:6px; margin-bottom:10px;">
+        <div class="stat-pill">
+          <span class="stat-val" style="color:var(--green-light)">142</span>
+          <span class="stat-lbl">Wins</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-val" style="color:#ff6b78">58</span>
+          <span class="stat-lbl">Losses</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-val" style="color:var(--yellow)">71%</span>
+          <span class="stat-lbl">W/R</span>
+        </div>
+      </div>
+
+      <!-- XP bar -->
+      <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+        <span class="font-label text-xs font-bold" style="color:var(--text-muted)">LVL 38</span>
+        <span class="font-label text-xs font-bold" style="color:var(--text-muted)">6,800 / 8,000 XP</span>
+      </div>
+      <div class="xp-bar-wrap">
+        <div class="xp-bar" id="xp-bar" style="width:0%"></div>
+      </div>
+      <p class="font-label text-xs mt-1" style="color:var(--text-muted); font-style:italic">1,200 XP to Level 39</p>
+    </div>
+
+    <!-- Nav pills -->
+    <div class="glass p-3">
+      <div class="nav-pill active" onclick="setPill(this)">
+        <i class="fa fa-gamepad" style="width:16px"></i> Play
+      </div>
+      <div class="nav-pill" onclick="setPill(this); openModal('shop-modal')">
+        <i class="fa fa-store" style="width:16px"></i> Shop
+      </div>
+      <div class="nav-pill" onclick="setPill(this); openModal('leaderboard-modal')">
+        <i class="fa fa-trophy" style="width:16px"></i> Leaderboard
+      </div>
+      <div class="nav-pill" onclick="setPill(this)">
+        <i class="fa fa-shield" style="width:16px"></i> Achievements
+        <span style="margin-left:auto;padding:1px 7px;border-radius:999px;background:rgba(123,44,191,0.3);color:#c77dff;font-size:0.62rem;font-family:'Nunito',sans-serif;font-weight:800">3</span>
+      </div>
+      <div class="nav-pill" onclick="setPill(this)">
+        <i class="fa fa-user" style="width:16px"></i> Profile
+      </div>
+      <div class="nav-pill" onclick="setPill(this); openModal('settings-modal')">
+        <i class="fa fa-gear" style="width:16px"></i> Settings
+      </div>
+    </div>
+
+  </div><!-- /left-col -->
+
+  <!-- ═══ CENTER COLUMN ═══ -->
+  <div style="display:flex; flex-direction:column; gap:14px;">
+
+    <!-- Matchmaking -->
+    <div class="glass-green p-6">
+      <p class="section-eyebrow">🌿 Matchmaking</p>
+      <div style="display:flex; gap:12px; margin-bottom:16px;">
+
+        <!-- Casual -->
+        <button class="match-btn casual" id="btn-casual" onclick="startSearch('casual')">
+          <span class="match-icon">🌱</span>
+          <span class="match-title" style="color:var(--green-light)">Casual</span>
+          <span class="match-sub">No rank on the line</span>
+          <span class="wait-badge green">⚡ ~45s wait</span>
+        </button>
+
+        <!-- Ranked -->
+        <button class="match-btn ranked" id="btn-ranked" onclick="startSearch('ranked')">
+          <span class="match-icon">🧟</span>
+          <span class="match-title" style="color:#c77dff">Ranked</span>
+          <span class="match-sub">Climb the leaderboard</span>
+          <span class="wait-badge purple">⏳ ~2m wait</span>
+        </button>
+
+      </div>
+
+      <!-- Searching bar -->
+      <div class="searching-bar" id="searching-bar">
+        <div class="searching-fill"></div>
+      </div>
+      <div id="search-status" style="display:none; margin-top:10px; display:none; align-items:center; justify-content:space-between;">
+        <span class="font-label text-xs font-bold" id="search-label" style="color:var(--green-light)"></span>
+        <button onclick="cancelSearch()" style="font-family:'Nunito',sans-serif;font-size:0.72rem;font-weight:800;color:var(--red);background:none;border:none;cursor:pointer;padding:0;">✕ Cancel</button>
+      </div>
+
+      <!-- Mode filters -->
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;">
+        <p class="font-label text-xs font-bold" style="color:var(--text-muted); width:100%; margin-bottom:2px;">MAP MODE</p>
+        <button class="mode-chip active-chip" onclick="toggleChip(this)">🌻 Sunflower Fields</button>
+        <button class="mode-chip" onclick="toggleChip(this)">🧟 Graveyard Rush</button>
+        <button class="mode-chip" onclick="toggleChip(this)">🌙 Night Defense</button>
+        <button class="mode-chip" onclick="toggleChip(this)">🌊 Tidal Siege</button>
+      </div>
+    </div>
+
+    <!-- Recent Match History -->
+    <div class="glass p-5">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+        <p class="section-eyebrow" style="margin:0">⚔️ Recent Matches</p>
+        <button class="font-label text-xs font-bold" style="color:var(--text-muted);background:none;border:none;cursor:pointer;" onclick="toast('info','Full match history coming soon! 🌱')">See all →</button>
+      </div>
+
+      <div id="match-history"></div>
+    </div>
+
+    <!-- Chat -->
+    <div class="glass p-0" style="overflow:hidden">
+      <div style="padding:14px 16px 10px; border-bottom:1px solid rgba(255,255,255,0.07); display:flex; align-items:center; justify-content:space-between;">
+        <p class="section-eyebrow" style="margin:0">💬 Lobby Chat</p>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <div style="width:7px;height:7px;border-radius:50%;background:var(--green-light);box-shadow:0 0 5px var(--green-light)"></div>
+          <span class="font-label text-xs font-bold" style="color:var(--text-muted)" id="online-count">214 online</span>
+        </div>
+      </div>
+      <div id="chat-box">
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input-wrap">
+          <input type="text" class="chat-input" id="chat-input" placeholder="Say something to the lobby… 🌱" maxlength="120"
+                 onkeydown="if(event.key==='Enter') sendChat()" />
+          <button class="chat-send" onclick="sendChat()"><i class="fa fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /center -->
+
+  <!-- ═══ RIGHT COLUMN: FRIENDS ═══ -->
+  <div id="friends-col" style="display:flex; flex-direction:column; gap:14px;">
+
+    <!-- Friends list -->
+    <div class="glass p-5" style="flex:1">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+        <p class="section-eyebrow" style="margin:0">🌿 Friends</p>
+        <button onclick="toast('info','Add a friend by username! 🌱')" style="width:26px;height:26px;border-radius:8px;background:rgba(82,183,136,0.15);border:1px solid rgba(82,183,136,0.3);color:var(--green-light);cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;">+</button>
+      </div>
+      <p class="font-label text-xs font-bold mb-2" style="color:var(--green-light); letter-spacing:1px">ONLINE — <span id="online-friends">4</span></p>
+      <div id="friends-online"></div>
+      <p class="font-label text-xs font-bold mb-2 mt-3" style="color:var(--text-muted); letter-spacing:1px">OFFLINE — <span id="offline-friends">3</span></p>
+      <div id="friends-offline"></div>
+    </div>
+
+    <!-- Mini leaderboard -->
+    <div class="glass-yellow p-5">
+      <p class="section-eyebrow">🏆 Top Gardeners</p>
+      <div id="mini-lb"></div>
+      <button class="font-label text-xs font-bold mt-3 w-full" style="color:var(--yellow);background:none;border:none;cursor:pointer;" onclick="openModal('leaderboard-modal')">Full leaderboard →</button>
+    </div>
+
+  </div><!-- /friends-col -->
+
+</div><!-- /main-grid -->
+
+<!-- ══════ MODE CHIP STYLES ══════ -->
+<style>
+  .mode-chip {
+    padding: 5px 12px; border-radius: 999px;
+    font-family: 'Nunito', sans-serif; font-size: 0.72rem; font-weight: 800;
+    cursor: pointer; transition: all 0.15s;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-muted);
+  }
+  .mode-chip:hover { background: rgba(255,255,255,0.1); color: var(--text-light); }
+  .mode-chip.active-chip {
+    background: rgba(82,183,136,0.18);
+    border-color: rgba(82,183,136,0.4);
+    color: var(--green-light);
+  }
+</style>
+
+<!-- TOAST -->
+<div id="toast-container"></div>
+
+<!-- ══════ MODALS ══════ -->
+
+<!-- SHOP -->
+<div class="modal-overlay" id="shop-modal">
+  <div class="modal-box">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;">
+      <h2 class="font-game text-xl" style="color:var(--yellow); letter-spacing:1px">🛒 Garden Shop</h2>
+      <button onclick="closeModal('shop-modal')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.2rem;">✕</button>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+      <div class="glass p-4 text-center" style="cursor:pointer" onclick="buyItem('XP Boost 2x 🚀', 500)">
+        <div style="font-size:2rem; margin-bottom:6px">🚀</div>
+        <p class="font-label font-bold text-sm" style="color:var(--text-light)">XP Boost 2×</p>
+        <p class="font-label text-xs" style="color:var(--text-muted)">1 hour</p>
+        <p class="font-label font-bold text-xs mt-2" style="color:var(--yellow)">🪙 500</p>
+      </div>
+      <div class="glass p-4 text-center" style="cursor:pointer" onclick="buyItem('Zombie Skin 🧟', 1200)">
+        <div style="font-size:2rem; margin-bottom:6px">🧟</div>
+        <p class="font-label font-bold text-sm" style="color:var(--text-light)">Zombie Skin</p>
+        <p class="font-label text-xs" style="color:var(--text-muted)">Avatar frame</p>
+        <p class="font-label font-bold text-xs mt-2" style="color:var(--yellow)">🪙 1,200</p>
+      </div>
+      <div class="glass p-4 text-center" style="cursor:pointer" onclick="buyItem('Sun Pack ☀️', 300)">
+        <div style="font-size:2rem; margin-bottom:6px">☀️</div>
+        <p class="font-label font-bold text-sm" style="color:var(--text-light)">Sun Pack</p>
+        <p class="font-label text-xs" style="color:var(--text-muted)">+500 in-game suns</p>
+        <p class="font-label font-bold text-xs mt-2" style="color:var(--yellow)">🪙 300</p>
+      </div>
+      <div class="glass p-4 text-center" style="cursor:pointer" onclick="buyItem('Battle Pass 🌿', 2500)">
+        <div style="font-size:2rem; margin-bottom:6px">🌿</div>
+        <p class="font-label font-bold text-sm" style="color:var(--text-light)">Battle Pass</p>
+        <p class="font-label text-xs" style="color:var(--text-muted)">Season 4</p>
+        <p class="font-label font-bold text-xs mt-2" style="color:var(--yellow)">🪙 2,500</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="modal-overlay" id="leaderboard-modal">
+  <div class="modal-box" style="max-width:500px">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;">
+      <h2 class="font-game text-xl" style="color:var(--yellow); letter-spacing:1px">🏆 Global Leaderboard</h2>
+      <button onclick="closeModal('leaderboard-modal')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.2rem;">✕</button>
+    </div>
+    <div id="full-leaderboard"></div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal-box">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;">
+      <h2 class="font-game text-xl" style="color:var(--green-light); letter-spacing:1px">⚙️ Settings</h2>
+      <button onclick="closeModal('settings-modal')" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.2rem;">✕</button>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div>
+        <p class="font-label text-xs font-bold mb-2" style="color:var(--text-muted); letter-spacing:1.5px; text-transform:uppercase">Audio</p>
+        <label style="display:flex; align-items:center; justify-content:space-between; font-family:'Nunito',sans-serif; font-size:0.85rem; font-weight:700; color:var(--text-light); margin-bottom:10px">
+          🔊 Music Volume
+          <input type="range" min="0" max="100" value="70" style="width:120px; accent-color:var(--green-light)" />
+        </label>
+        <label style="display:flex; align-items:center; justify-content:space-between; font-family:'Nunito',sans-serif; font-size:0.85rem; font-weight:700; color:var(--text-light)">
+          🔈 SFX Volume
+          <input type="range" min="0" max="100" value="85" style="width:120px; accent-color:var(--green-light)" />
+        </label>
+      </div>
+      <div style="height:1px; background:rgba(255,255,255,0.07)"></div>
+      <div>
+        <p class="font-label text-xs font-bold mb-2" style="color:var(--text-muted); letter-spacing:1.5px; text-transform:uppercase">Notifications</p>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer; font-family:'Nunito',sans-serif; font-size:0.85rem; font-weight:700; color:var(--text-light); margin-bottom:8px">
+          <input type="checkbox" checked style="accent-color:var(--green-light); width:16px; height:16px" />
+          Game invites
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer; font-family:'Nunito',sans-serif; font-size:0.85rem; font-weight:700; color:var(--text-light)">
+          <input type="checkbox" style="accent-color:var(--green-light); width:16px; height:16px" />
+          Lobby chat messages
+        </label>
+      </div>
+      <div style="height:1px; background:rgba(255,255,255,0.07)"></div>
+      <div>
+        <p class="font-label text-xs font-bold mb-2" style="color:var(--text-muted); letter-spacing:1.5px; text-transform:uppercase">Account</p>
+        <button onclick="closeModal('settings-modal'); toast('info','Redirecting to login…')" style="width:100%;padding:10px;border-radius:12px;font-family:'Nunito',sans-serif;font-size:0.85rem;font-weight:800;background:rgba(230,57,70,0.15);border:1px solid rgba(230,57,70,0.3);color:#ff6b78;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='rgba(230,57,70,0.25)'" onmouseout="this.style.background='rgba(230,57,70,0.15)'">
+          🚪 Sign Out
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE DETAIL -->
+<div class="modal-overlay" id="profile-modal">
+  <div class="modal-box" style="text-align:center">
+    <button onclick="closeModal('profile-modal')" style="float:right;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.2rem;">✕</button>
+    <div style="clear:both"></div>
+    <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--green-light),var(--purple));padding:3px;margin:0 auto 12px">
+      <div style="width:100%;height:100%;border-radius:50%;background:#1a1a2e;display:flex;align-items:center;justify-content:center;font-size:2.5rem">🌻</div>
+    </div>
+    <h2 class="font-game text-2xl" style="color:var(--yellow); letter-spacing:1px; margin-bottom:4px">PlantMaster</h2>
+    <div class="rank-badge" style="display:inline-flex; margin-bottom:16px">⚔️ Diamond II — 2,840 SR</div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px">
+      <div class="stat-pill"><span class="stat-val" style="color:var(--green-light)">142</span><span class="stat-lbl">Wins</span></div>
+      <div class="stat-pill"><span class="stat-val" style="color:#ff6b78">58</span><span class="stat-lbl">Losses</span></div>
+      <div class="stat-pill"><span class="stat-val" style="color:var(--yellow)">2.45</span><span class="stat-lbl">K/D</span></div>
+    </div>
+    <p class="font-label text-xs" style="color:var(--text-muted)">Member since January 2024 · <span style="color:var(--yellow)">🪙 4,250 coins</span></p>
+  </div>
+</div>
+
+<script src="./js/lobby.js"></script>
+</body>
+</html>

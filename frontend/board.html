@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verdant Siege — Battle</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:wght@400;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="./assets/css/board.css">
+</head>
+<body>
+
+<!-- ══════ HUD ══════ -->
+<div id="hud">
+  <!-- Base HP (left) -->
+  <div class="base-hp-wrap">
+    <span style="font-size:1.2rem">🏰</span>
+    <div>
+      <p class="fn" style="font-size:0.58rem; font-weight:800; color:var(--t-muted); letter-spacing:1px; text-transform:uppercase">Base</p>
+      <div class="base-hp-track">
+        <div class="base-hp-fill" id="base-hp-fill" style="width:100%"></div>
+      </div>
+      <p class="fn" style="font-size:0.6rem; font-weight:800; color:var(--t-muted); margin-top:1px">
+        <span id="base-hp-val">30</span> / 30
+      </p>
+    </div>
+  </div>
+
+  <!-- Sun counter -->
+  <div class="hud-chip chip-sun">🌞 <span id="sun-count">50</span></div>
+
+  <!-- Turn timer (center) -->
+  <div id="timer-wrap">
+    <div id="turn-label" style="color:var(--g-light)">🌿 YOUR TURN</div>
+    <div id="timer-track">
+      <div id="timer-fill"></div>
+    </div>
+    <div id="timer-num" style="color:var(--yellow)">30</div>
+  </div>
+
+  <!-- Brain counter -->
+  <div class="hud-chip chip-brain">💀 <span id="brain-count">3</span></div>
+
+  <!-- Wave counter (right) -->
+  <div class="hud-chip chip-wave">🌊 Wave <span id="wave-num">1</span> / 5</div>
+</div>
+
+<!-- ══════ GAME WRAP ══════ -->
+<div id="game-wrap">
+
+  <!-- Board area -->
+  <div id="board-area">
+    <!-- Lane danger overlays injected by JS -->
+    <div id="grid-container"></div>
+  </div>
+
+  <!-- Card Tray -->
+  <div id="card-tray">
+    <!-- Plant cards (left) -->
+    <div style="display:flex; gap:7px; flex-wrap:wrap; justify-content:center" id="plant-cards"></div>
+
+    <div class="tray-sep"></div>
+
+    <!-- Action buttons -->
+    <div style="display:flex; flex-direction:column; gap:6px;">
+      <button class="tray-btn btn-end-turn" id="end-turn-btn" onclick="endTurn()">⚡ END TURN</button>
+      <button class="tray-btn btn-surrender" onclick="confirmSurrender()">🏳 SURRENDER</button>
+    </div>
+
+    <div class="tray-sep"></div>
+
+    <!-- Zombie cards (right) -->
+    <div style="display:flex; gap:7px; flex-wrap:wrap; justify-content:center" id="zombie-cards"></div>
+  </div>
+
+</div>
+
+<!-- TURN BANNER -->
+<div id="turn-banner"></div>
+
+<!-- WAVE ANNOUNCE -->
+<div id="wave-announce"><div class="wave-text" id="wave-text"></div></div>
+
+<!-- TOAST -->
+<div id="toast-cont"></div>
+
+<!-- GAME OVER OVERLAY -->
+<div id="gameover-overlay">
+  <div style="text-align:center; padding:40px;">
+    <div id="go-emoji" style="font-size:5rem; margin-bottom:16px"></div>
+    <h1 class="fg" id="go-title" style="font-size:clamp(2rem,6vw,3.5rem); letter-spacing:3px; margin-bottom:8px"></h1>
+    <p class="fn" id="go-sub" style="color:var(--t-muted); font-size:1rem; margin-bottom:28px; font-weight:600"></p>
+    <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+      <button class="tray-btn btn-end-turn" onclick="restartGame()">🌱 PLAY AGAIN</button>
+      <button class="tray-btn" style="background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.2);color:var(--t-light);" onclick="window.location.href='verdant-siege-lobby.html'">🏠 LOBBY</button>
+    </div>
+  </div>
+</div>
+
+<script src="./js/board.js"></script>
+</body>
+</html>

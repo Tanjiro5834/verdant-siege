@@ -1,0 +1,871 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --g-deep: #2d6a4f;
+  --g-mid: #4a7c59;
+  --g-light: #52b788;
+  --yellow: #ffd166;
+  --orange: #fb8500;
+  --red: #e63946;
+  --purple: #7b2cbf;
+  --p-dark: #5a189a;
+  --night-1: #1a1a2e;
+  --night-2: #3a2e4a;
+  --night-3: #16213e;
+  --t-light: #fefae0;
+  --t-muted: rgba(254, 250, 224, 0.5);
+
+  /* grid cell size — shrinks on small screens */
+  --cell: clamp(60px, 8.5vw, 88px);
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  font-family: "Quicksand", sans-serif;
+  background: radial-gradient(
+    ellipse at 35% 0%,
+    #4a7c59 0%,
+    #2d6a4f 30%,
+    #1a3320 100%
+  );
+  color: var(--t-light);
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ── FONTS ── */
+.fg {
+  font-family: "Luckiest Guy", cursive;
+}
+.fn {
+  font-family: "Nunito", sans-serif;
+}
+
+/* ══════════════════════════════════════════
+       TOP HUD
+    ══════════════════════════════════════════ */
+#hud {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  gap: 10px;
+  background: rgba(10, 20, 15, 0.72);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(82, 183, 136, 0.2);
+  height: 52px;
+  flex-shrink: 0;
+}
+
+/* Base HP bar */
+.base-hp-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.base-hp-track {
+  width: 120px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.base-hp-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e63946, #fb8500, var(--g-light));
+  transition: width 0.5s ease;
+}
+
+/* Turn timer */
+#timer-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+#timer-track {
+  width: 160px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+}
+#timer-fill {
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--g-light), var(--yellow));
+  transform-origin: left;
+  transition: transform 1s linear;
+}
+#turn-label {
+  font-family: "Luckiest Guy", cursive;
+  font-size: 0.82rem;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+#timer-num {
+  font-family: "Luckiest Guy", cursive;
+  font-size: 1.1rem;
+  min-width: 28px;
+  text-align: center;
+}
+
+/* Wave / sun / brain */
+.hud-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  font-family: "Nunito", sans-serif;
+  font-size: 0.82rem;
+  font-weight: 800;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.chip-sun {
+  background: rgba(255, 209, 102, 0.15);
+  border: 1px solid rgba(255, 209, 102, 0.35);
+  color: var(--yellow);
+}
+.chip-brain {
+  background: rgba(123, 44, 191, 0.15);
+  border: 1px solid rgba(123, 44, 191, 0.35);
+  color: #c77dff;
+}
+.chip-wave {
+  background: rgba(82, 183, 136, 0.12);
+  border: 1px solid rgba(82, 183, 136, 0.3);
+  color: var(--g-light);
+}
+
+/* ══════════════════════════════════════════
+       MAIN LAYOUT
+    ══════════════════════════════════════════ */
+#game-wrap {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 52px);
+  overflow: hidden;
+}
+#board-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 8px 10px 4px;
+}
+
+/* ══════════════════════════════════════════
+       BATTLEFIELD BACKGROUND
+    ══════════════════════════════════════════ */
+#board-area::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 200, 50, 0.04) 0%,
+      rgba(45, 106, 79, 0) 100%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.04) 0px,
+      rgba(0, 0, 0, 0) 1px,
+      transparent 1px,
+      transparent calc(var(--cell))
+    );
+  pointer-events: none;
+}
+/* Sky gradient at top */
+#board-area::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 200, 50, 0.06) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+/* Row ground strips */
+.row-ground {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ══════════════════════════════════════════
+       GRID
+    ══════════════════════════════════════════ */
+#grid-container {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-rows: repeat(5, var(--cell));
+  grid-template-columns: repeat(9, var(--cell));
+  gap: 3px;
+}
+
+.cell {
+  width: var(--cell);
+  height: var(--cell);
+  border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+/* Row alternating tints — gives grass feel */
+.cell.row-0 {
+  background: rgba(45, 106, 79, 0.22);
+}
+.cell.row-1 {
+  background: rgba(52, 90, 60, 0.18);
+}
+.cell.row-2 {
+  background: rgba(45, 106, 79, 0.25);
+}
+.cell.row-3 {
+  background: rgba(52, 90, 60, 0.18);
+}
+.cell.row-4 {
+  background: rgba(45, 106, 79, 0.22);
+}
+/* Plant zone: cols 0-3 slightly greener */
+.cell.plant-zone {
+  border: 1px solid rgba(82, 183, 136, 0.1);
+}
+/* Zombie zone: cols 5-8 slightly purple */
+.cell.zombie-zone {
+  border: 1px solid rgba(123, 44, 191, 0.08);
+}
+/* Middle col 4: no-man's land */
+.cell.mid-zone {
+  border: 1px dashed rgba(255, 255, 255, 0.07);
+}
+
+.cell:hover:not(.occupied-zombie):not(.occupied-plant) {
+  background: rgba(82, 183, 136, 0.28) !important;
+  transform: scale(1.04);
+}
+.cell.selected-card {
+  background: rgba(255, 209, 102, 0.22) !important;
+  border: 2px solid var(--yellow) !important;
+  transform: scale(1.04);
+}
+.cell.invalid-drop {
+  background: rgba(230, 57, 70, 0.25) !important;
+  border: 2px solid var(--red) !important;
+  animation: shakeCell 0.3s ease;
+}
+@keyframes shakeCell {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+/* ── UNIT INSIDE CELL ── */
+.unit {
+  font-size: calc(var(--cell) * 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 2;
+  transition: transform 0.15s;
+  line-height: 1;
+}
+.unit:hover {
+  transform: scale(1.08);
+}
+
+/* HP bar under unit */
+.unit-hp-wrap {
+  position: absolute;
+  bottom: 4px;
+  left: 6px;
+  right: 6px;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 999px;
+  overflow: hidden;
+  z-index: 3;
+}
+.unit-hp-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+.hp-high {
+  background: var(--g-light);
+}
+.hp-med {
+  background: var(--yellow);
+}
+.hp-low {
+  background: var(--red);
+  box-shadow: 0 0 6px var(--red);
+}
+
+/* Damage flash */
+.cell.flash-damage {
+  animation: flashDmg 0.35s ease;
+}
+@keyframes flashDmg {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(2.2) saturate(0.3);
+  }
+}
+
+/* Death pop */
+.cell.death-pop .unit {
+  animation: deathPop 0.5s ease forwards;
+}
+@keyframes deathPop {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  40% {
+    transform: scale(1.6);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+/* ── ZOMBIE MARCH ── */
+.zombie-unit {
+  transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  position: absolute;
+}
+/* Zombie bob animation */
+.unit.zombie-anim {
+  animation: zombieBob 1.2s ease-in-out infinite;
+}
+@keyframes zombieBob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(2deg);
+  }
+}
+/* Plant sway */
+.unit.plant-anim {
+  animation: plantSway 2s ease-in-out infinite;
+}
+@keyframes plantSway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  33% {
+    transform: rotate(3deg);
+  }
+  66% {
+    transform: rotate(-3deg);
+  }
+}
+/* Sunflower pulse */
+.unit.sun-anim {
+  animation: sunPulse 2.5s ease-in-out infinite;
+}
+@keyframes sunPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.1);
+    filter: brightness(1.3) drop-shadow(0 0 8px #ffd166);
+  }
+}
+
+/* ── PROJECTILE ── */
+.projectile {
+  position: fixed;
+  font-size: 1.1rem;
+  pointer-events: none;
+  z-index: 999;
+  animation: projectileFly var(--proj-dur, 0.45s) cubic-bezier(0.25, 0, 0.75, 1)
+    forwards;
+  will-change: transform;
+}
+@keyframes projectileFly {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(var(--proj-dx50, 50%), var(--proj-arc, -22px))
+      scale(0.9);
+  }
+  100% {
+    transform: translate(var(--proj-dx, 100%), 0) scale(0.6);
+    opacity: 0;
+  }
+}
+
+/* ── DAMAGE FLOAT ── */
+.dmg-float {
+  position: fixed;
+  font-family: "Luckiest Guy", cursive;
+  font-size: 1rem;
+  pointer-events: none;
+  z-index: 1000;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  animation: dmgFloat 0.9s ease-out forwards;
+}
+@keyframes dmgFloat {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-40px) scale(0.7);
+    opacity: 0;
+  }
+}
+
+/* ── SUN DROP ── */
+.sun-drop-anim {
+  position: fixed;
+  font-size: 1.5rem;
+  pointer-events: all;
+  cursor: pointer;
+  z-index: 500;
+  animation: sunFall linear var(--fall-dur, 3s) forwards;
+  filter: drop-shadow(0 0 6px rgba(255, 209, 102, 0.8));
+  transition: transform 0.1s;
+}
+.sun-drop-anim:hover {
+  transform: scale(1.2);
+}
+@keyframes sunFall {
+  0% {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(var(--fall-dist, 300px));
+    opacity: 0;
+  }
+}
+
+/* ──  LANE DANGER INDICATOR ── */
+.lane-danger {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--cell);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  z-index: 1;
+}
+.lane-danger-fill {
+  height: 100%;
+  border-radius: 0 8px 8px 0;
+  background: linear-gradient(
+    90deg,
+    rgba(230, 57, 70, 0),
+    rgba(230, 57, 70, 0.12)
+  );
+  transition: opacity 0.5s;
+}
+
+/* ══════════════════════════════════════════
+       CARD TRAY
+    ══════════════════════════════════════════ */
+#card-tray {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 10px 8px;
+  background: rgba(10, 20, 15, 0.72);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(82, 183, 136, 0.18);
+  flex-wrap: wrap;
+  min-height: 84px;
+}
+
+.plant-card {
+  width: 64px;
+  height: 72px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  position: relative;
+  border: 2px solid transparent;
+  background: rgba(45, 106, 79, 0.25);
+  flex-shrink: 0;
+}
+.plant-card:hover {
+  transform: translateY(-5px) scale(1.06);
+}
+.plant-card.active-card {
+  border-color: var(--yellow);
+  background: rgba(255, 209, 102, 0.15);
+  transform: translateY(-8px) scale(1.08);
+  box-shadow: 0 8px 24px rgba(255, 209, 102, 0.3);
+}
+.plant-card.card-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+.plant-card.card-disabled:hover {
+  transform: none;
+}
+.card-emoji {
+  font-size: 1.7rem;
+  line-height: 1;
+}
+.card-name {
+  font-family: "Nunito", sans-serif;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: var(--t-light);
+  text-align: center;
+  line-height: 1.2;
+}
+.card-cost {
+  position: absolute;
+  top: 3px;
+  right: 5px;
+  font-family: "Nunito", sans-serif;
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: var(--yellow);
+}
+/* Cooldown overlay */
+.card-cd {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Luckiest Guy", cursive;
+  font-size: 1rem;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+.plant-card.card-disabled .card-cd {
+  opacity: 1;
+}
+
+/* Zombie side tray */
+.zombie-card {
+  width: 64px;
+  height: 72px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  position: relative;
+  border: 2px solid transparent;
+  background: rgba(123, 44, 191, 0.2);
+  flex-shrink: 0;
+}
+.zombie-card:hover {
+  transform: translateY(-5px) scale(1.06);
+}
+.zombie-card.active-card {
+  border-color: #c77dff;
+  background: rgba(123, 44, 191, 0.3);
+  transform: translateY(-8px) scale(1.08);
+  box-shadow: 0 8px 24px rgba(123, 44, 191, 0.4);
+}
+.zombie-card.card-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+.zombie-card.card-disabled:hover {
+  transform: none;
+}
+
+/* Tray separator */
+.tray-sep {
+  width: 2px;
+  height: 52px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+/* Action buttons in tray */
+.tray-btn {
+  padding: 8px 18px;
+  border-radius: 14px;
+  font-family: "Luckiest Guy", cursive;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  border: 2px solid;
+  flex-shrink: 0;
+}
+.btn-end-turn {
+  background: linear-gradient(135deg, var(--g-deep), var(--g-mid));
+  border-color: var(--g-light);
+  color: white;
+  box-shadow: 0 4px 16px rgba(45, 106, 79, 0.4);
+}
+.btn-end-turn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 22px rgba(45, 106, 79, 0.55);
+}
+.btn-surrender {
+  background: rgba(230, 57, 70, 0.15);
+  border-color: rgba(230, 57, 70, 0.4);
+  color: #ff6b78;
+}
+.btn-surrender:hover {
+  background: rgba(230, 57, 70, 0.28);
+  transform: scale(1.04);
+}
+
+/* ── WHOSE TURN banner ── */
+#turn-banner {
+  position: fixed;
+  top: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  font-family: "Luckiest Guy", cursive;
+  font-size: 1.4rem;
+  letter-spacing: 2px;
+  padding: 8px 32px;
+  border-radius: 0 0 20px 20px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+#turn-banner.show {
+  opacity: 1;
+  animation: bannerDrop 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+@keyframes bannerDrop {
+  from {
+    transform: translateX(-50%) translateY(-30px);
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ── GAME OVER OVERLAY ── */
+#gameover-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+#gameover-overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── TOAST ── */
+#toast-cont {
+  position: fixed;
+  top: 60px;
+  right: 12px;
+  z-index: 8000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.g-toast {
+  padding: 9px 14px;
+  border-radius: 14px;
+  background: rgba(22, 33, 62, 0.95);
+  font-family: "Nunito", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1.5px solid;
+  max-width: 240px;
+  animation: tIn 0.25s ease forwards;
+}
+.g-toast.ts {
+  border-color: var(--g-light);
+  color: var(--g-light);
+}
+.g-toast.ti {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+.g-toast.te {
+  border-color: var(--red);
+  color: #ff6b78;
+}
+@keyframes tIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes tOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+}
+
+/* ── WAVE ANNOUNCE ── */
+#wave-announce {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+}
+#wave-announce.show {
+  animation: wavePop 1.8s ease forwards;
+}
+@keyframes wavePop {
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.wave-text {
+  font-family: "Luckiest Guy", cursive;
+  font-size: clamp(2rem, 6vw, 4rem);
+  letter-spacing: 4px;
+  color: var(--red);
+  text-shadow:
+    0 0 40px rgba(230, 57, 70, 0.8),
+    0 4px 20px rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.4);
+  padding: 16px 48px;
+  border-radius: 20px;
+  border: 2px solid rgba(230, 57, 70, 0.4);
+}
+
+/* ── CONFETTI ── */
+.cf {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+}
+@keyframes cfFall {
+  0% {
+    transform: translateY(-10px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+}

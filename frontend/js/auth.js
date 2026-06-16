@@ -2,12 +2,12 @@
 // CONFIG & STATE
 // ══════════════════════════════════════════════════
 const API = {
-  base: 'http://localhost:8080/verdant-siege/api',
+  base: 'http://localhost/verdant-siege/backend/api',
   endpoints: {
-    login: '/auth.php?action=login',
-    register: '/auth.php?action=register',
-    checkUsername: '/auth.php?action=check_username',
-    forgotPassword: '/auth.php?action=forgot_password'
+    login:         '/Auth.php?action=login',
+    register:      '/Auth.php?action=register',
+    checkUsername: '/Auth.php?action=check_username',
+    forgotPassword:'/Auth.php?action=forgot_password'
   }
 };
 
@@ -361,7 +361,7 @@ function checkReferral(inp) {
 async function handleLogin(e) {
   e.preventDefault();
   const honeypot = e.target.querySelector('input[name="website"]');
-  if (honeypot && honeypot.value) return; // bot detected
+  if (honeypot && honeypot.value) return;
 
   const username = document.getElementById('login-username').value.trim();
   const password = document.getElementById('login-password').value;
@@ -377,43 +377,35 @@ async function handleLogin(e) {
   btn.disabled = true;
 
   try {
-    let success = false, data = {};
-    try {
-      const form = new FormData();
-      form.append('username', username);
-      form.append('password', password);
-      form.append('remember', rememberChecked ? '1' : '0');
+    // ── WIRED: call real Auth.php ──
+    const res = await fetch('http://localhost/verdant-siege/backend/api/Auth.php', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ action: 'login', username, password })
+    });
+    const data = await res.json();
 
-      const res = await fetch(API.base + API.endpoints.login, {
-        method: 'POST', body: form, credentials: 'include'
-      });
-      data = await res.json();
-      success = data.success;
-    } catch {
-      // Offline mock: accept any valid-looking credentials
-      if (username.length >= 3 && password.length >= 6) {
-        success = true;
-        data = { token: 'mock_' + Math.random().toString(36).slice(2), username };
-      } else {
-        data = { error: 'Invalid credentials' };
-      }
-    }
-
-    if (success) {
+    if (data.success) {
+      // ── WIRED: store real token + user data ──
       if (rememberChecked) {
         localStorage.setItem('saved_username', username);
-        localStorage.setItem('remember_me', 'true');
-        localStorage.setItem('auth_token', data.token);
+        localStorage.setItem('remember_me',    'true');
+        localStorage.setItem('auth_token',     data.token);
       } else {
         localStorage.removeItem('saved_username');
         localStorage.removeItem('remember_me');
       }
       sessionStorage.setItem('auth_token', data.token);
+      sessionStorage.setItem('user_id',    data.user.id);
+      sessionStorage.setItem('username',   data.user.username);
+      sessionStorage.setItem('elo',        data.user.elo_rating);
+      sessionStorage.setItem('coins',      data.user.coins);
+
       loginAttempts = 0;
       confettiBurst();
-      toast('success', `Welcome back, ${data.username || username}! 🌻`);
+      toast('success', `Welcome back, ${data.user.username}! 🌻`);
       setTimeout(() => { toast('info', '🌿 Loading your garden...'); }, 800);
-      // setTimeout(() => { window.location.href = '/game.html'; }, 2500);
+      setTimeout(() => { window.location.href = './lobby.html'; }, 2000); // ← redirect
     } else {
       loginAttempts++;
       toast('error', data.error || '❌ Invalid credentials');
@@ -436,22 +428,20 @@ async function handleLogin(e) {
   }
 }
 
-// ══════════════════════════════════════════════════
-// SUBMIT: REGISTER
-// ══════════════════════════════════════════════════
+
 async function handleRegister(e) {
   e.preventDefault();
   const honeypot = e.target.querySelector('input[name="website"]');
   if (honeypot && honeypot.value) return;
 
-  const username = document.getElementById('reg-username').value.trim();
-  const email = document.getElementById('reg-email').value.trim();
-  const password = document.getElementById('reg-password').value;
-  const confirm = document.getElementById('reg-confirm').value;
-  const dob = document.getElementById('reg-dob').value;
+  const username     = document.getElementById('reg-username').value.trim();
+  const email        = document.getElementById('reg-email').value.trim();
+  const password     = document.getElementById('reg-password').value;
+  const confirm      = document.getElementById('reg-confirm').value;
+  const dob          = document.getElementById('reg-dob').value;
   const termsChecked = document.getElementById('terms-hidden').checked;
 
-  // Validation
+  // Validation — unchanged
   if (!username || username.length < 3) { toast('error', '🌱 Username needs at least 3 characters'); return; }
   if (!/^[a-zA-Z0-9_]+$/.test(username)) { toast('error', '🍃 Username: letters, numbers, underscore only'); return; }
   if (!email || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) { toast('error', '📧 Enter a valid email address'); return; }
@@ -460,7 +450,6 @@ async function handleRegister(e) {
   if (password !== confirm) { toast('error', '❌ Passwords do not match'); return; }
   if (!termsChecked) { toast('error', '📜 Please agree to the Terms of Service'); return; }
 
-  // DOB COPPA check
   if (dob) {
     const age = Math.floor((Date.now() - new Date(dob)) / (365.25 * 24 * 3600 * 1000));
     if (age < 13) { toast('error', '🎂 You must be at least 13 to play (COPPA)'); return; }
@@ -468,33 +457,36 @@ async function handleRegister(e) {
 
   const btn = document.getElementById('reg-btn');
   btn.innerHTML = '<span class="spinner"></span> Raising the dead...';
-  btn.disabled = true;
+  btn.disabled  = true;
 
   try {
-    let success = false, data = {};
-    try {
-      const res = await fetch(API.base + API.endpoints.register, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username, email, password,
-          dob: dob || null,
-          referral: document.getElementById('reg-referral').value.trim() || null,
-          newsletter: document.getElementById('news-hidden').checked
-        })
-      });
-      data = await res.json();
-      success = data.success;
-    } catch {
-      // Offline mock
-      success = true;
-      data = { message: 'Registration successful! Please verify your email.' };
-    }
+    // ── WIRED: call real Auth.php ──
+    const res = await fetch('http://localhost/verdant-siege/backend/api/Auth.php', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        action:     'register',
+        username,
+        email,
+        password,
+        dob:        dob || null,
+        referral:   document.getElementById('reg-referral').value.trim() || null,
+        newsletter: document.getElementById('news-hidden').checked
+      })
+    });
+    const data = await res.json();
 
-    if (success) {
+    if (data.success) {
+      // ── WIRED: store token on register — no second login needed ──
+      sessionStorage.setItem('auth_token', data.token);
+      sessionStorage.setItem('user_id',    data.user.id);
+      sessionStorage.setItem('username',   data.user.username);
+      sessionStorage.setItem('elo',        data.user.elo_rating);
+      sessionStorage.setItem('coins',      data.user.coins);
+
       confettiBurst();
-      toast('success', data.message || '🌱 Account created! Check your email');
-      setTimeout(() => flipToLogin(), 2000);
+      toast('success', data.message || '🌱 Account created! Welcome to Verdant Siege!');
+      setTimeout(() => { window.location.href = './lobby.html'; }, 2000); // ← redirect
     } else {
       toast('error', data.error || '🧟 Registration failed');
     }
@@ -502,7 +494,7 @@ async function handleRegister(e) {
     toast('error', '🧟 Connection lost! Check your internet');
   } finally {
     btn.innerHTML = '🧟 JOIN THE SIEGE';
-    btn.disabled = false;
+    btn.disabled  = false;
   }
 }
 

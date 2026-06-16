@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '../utils/Database.php';
+require_once __DIR__ . '/../utils/Database.php';
 
 class UserRepository{
     private $db;
@@ -56,10 +56,10 @@ class UserRepository{
             ':last_ip'           => $user->getLastIp(),
         ]);
 
-        return $this->db->lastInsertId();
+        return $this->getById((int) $this->db->lastInsertId());
     }
 
-    public function getById(int $id) : int {
+    public function getById(int $id) : ?array {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
         $stmt->execute([$id]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -170,24 +170,38 @@ class UserRepository{
 
     // Extra queries (based on schema)
     public function findActiveUsers(){
-        
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE is_active = TRUE");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function findBannedUsers(){
-
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE is_banned = TRUE");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function findLeaderboard($limit = 10){
-
+        $stmt = $this->db->prepare("SELECT * FROM users ORDER BY elo_rating DESC LIMIT :limit");
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
 
     public function findByDisplayName($displayName){
-
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE display_name = :display_name");
+        $stmt->execute([':display_name' => $displayName]);
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
+
 
     public function findByFavoriteUnit($favoriteUnit){
-
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE favorite_unit = :favorite_unit");
+        $stmt->execute([':favorite_unit' => $favoriteUnit]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
 
     // Stats / Economy helpers
     public function incrementCoins($userId, $amount){
@@ -214,14 +228,14 @@ class UserRepository{
         try{
             $this->db->beginTransaction();
             $stmt = $this->db->prepare("SELECT * FROM users WHERE id = ?");
-            $stmt->execute([':id' => $userId]);
+            $stmt->execute([$userId]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if($row){
-                $newCoins = $row['coins'] + $amount;
+                $newGems = $row['gems'] + $amount;
 
-                $updateStmt = $this->db->prepare("UPDATE users SET gems = :coins WHERE id = :id");
-                $updateStmt->execute([':coins' => $newCoins, ':id' => $userId]);
+                $updateStmt = $this->db->prepare("UPDATE users SET gems = :gems WHERE id = :id");
+                $updateStmt->execute([':gems' => $newGems, ':id' => $userId]);
             }
             $this->db->commit();
         }catch(Exception $e){
@@ -232,6 +246,68 @@ class UserRepository{
 
     // result = win/loss/draw
     public function recordMatchResult($userId, $result){
+        try {
+            $this->db->beginTransaction();
 
-    } 
+            $stmt = $this->db->prepare("SELECT * FROM users WHERE id = :id");
+            $stmt->execute([':id' => $userId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if(!$user){
+                throw new Exception("User not found");
+            }
+
+            $wins = $user['wins'];
+            $losses = $user['losses'];
+            $draws = $user['draws'];
+            $totalMatches = $user['total_matches'] + 1;
+            $currentStreak = $user['current_streak'];
+            $bestStreak = $user['best_streak'];
+
+            switch($result){
+                case 'win':
+                    $wins++;
+                    $currentStreak = ($currentStreak >= 0 ? $currentStreak + 1 : 1);
+                    if($currentStreak > $bestStreak){
+                        $bestStreak = $currentStreak;
+                    }
+                    break;
+                case 'loss':
+                    $losses++;
+                    $currentStreak = ($currentStreak <= 0 ? $currentStreak - 1 : -1);
+                    break;
+                case 'draw':
+                    $draws++;
+                    // streak unchanged
+                    break;
+                default:
+                    throw new Exception("Invalid result type");
+            }
+
+            $updateStmt = $this->db->prepare("
+                UPDATE users SET 
+                    wins = :wins,
+                    losses = :losses,
+                    draws = :draws,
+                    total_matches = :total_matches,
+                    current_streak = :current_streak,
+                    best_streak = :best_streak
+                WHERE id = :id
+            ");
+            $updateStmt->execute([
+                ':wins' => $wins,
+                ':losses' => $losses,
+                ':draws' => $draws,
+                ':total_matches' => $totalMatches,
+                ':current_streak' => $currentStreak,
+                ':best_streak' => $bestStreak,
+                ':id' => $userId
+            ]);
+
+            $this->db->commit();
+        } catch(Exception $e){
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
 }

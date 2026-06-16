@@ -5,7 +5,7 @@ class Database {
 
     private function __construct() {
         $this->connection = new PDO(
-            "mysql:host=localhost;dbname=thomas_aquinas;charset=utf8mb4",
+            "mysql:host=localhost;dbname=verdant_siege;charset=utf8mb4",
             "root",
             ""
         );

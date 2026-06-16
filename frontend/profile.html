@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verdant Siege — Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:wght@400;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --g-deep:   #2d6a4f;
+      --g-mid:    #4a7c59;
+      --g-light:  #52b788;
+      --yellow:   #ffd166;
+      --orange:   #fb8500;
+      --red:      #e63946;
+      --purple:   #7b2cbf;
+      --night-1:  #1a1a2e;
+      --night-2:  #3a2e4a;
+      --night-3:  #16213e;
+      --t-light:  #fefae0;
+      --t-muted:  rgba(254,250,224,0.5);
+    }
+
+    html, body {
+      min-height: 100vh;
+      font-family: 'Quicksand', sans-serif;
+      background: radial-gradient(ellipse at 60% 10%, #3a2e4a 0%, #1a1a2e 55%, #16213e 100%);
+      color: var(--t-light);
+      overflow-x: hidden;
+    }
+
+    /* ── BG PARTICLES ── */
+    .bp {
+      position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+      animation: bpFloat linear infinite; opacity: 0.05;
+    }
+    @keyframes bpFloat {
+      0%   { transform: translateY(100vh); opacity: 0; }
+      10%  { opacity: 0.05; }
+      90%  { opacity: 0.05; }
+      100% { transform: translateY(-20vh); opacity: 0; }
+    }
+
+    /* ── FONTS ── */
+    .fg { font-family: 'Luckiest Guy', cursive; }
+    .fn { font-family: 'Nunito', sans-serif; }
+
+    /* ── NAVBAR ── */
+    #navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(22,33,62,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(123,44,191,0.25);
+      height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px;
+    }
+    .nav-logo { font-family: 'Luckiest Guy', cursive; font-size: 1.2rem; letter-spacing:1.5px; color: var(--yellow); }
+    .nav-btn {
+      padding: 7px 16px; border-radius: 12px;
+      font-family: 'Nunito', sans-serif; font-size: 0.8rem; font-weight: 700;
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+      color: var(--t-light); cursor: pointer; transition: all 0.18s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .nav-btn:hover { background: rgba(255,255,255,0.14); }
+
+    /* ── GLASS ── */
+    .glass {
+      background: rgba(30,20,40,0.22);
+      backdrop-filter: blur(18px);
+      border: 1.5px solid rgba(123,44,191,0.22);
+      border-radius: 22px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .glass-green {
+      background: rgba(45,106,79,0.18);
+      backdrop-filter: blur(18px);
+      border: 1.5px solid rgba(82,183,136,0.25);
+      border-radius: 22px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+
+    /* ── LAYOUT ── */
+    #main {
+      max-width: 1100px; margin: 0 auto;
+      padding: 28px 16px 60px;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 768px) {
+      #main { grid-template-columns: 1fr; }
+    }
+
+    /* ── SECTION LABEL ── */
+    .eyebrow {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.65rem; font-weight: 800;
+      letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--t-muted); margin-bottom: 12px;
+    }
+
+    /* ── AVATAR ── */
+    .avatar-wrap {
+      position: relative;
+      width: 100px; height: 100px;
+      margin: 0 auto 16px;
+      cursor: pointer;
+    }
+    .avatar-img {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--g-light);
+      box-shadow: 0 0 24px rgba(82,183,136,0.35);
+      background: linear-gradient(135deg, var(--g-deep), var(--purple));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.8rem;
+    }
+    .avatar-edit-overlay {
+      position: absolute; inset: 0; border-radius: 50%;
+      background: rgba(0,0,0,0.55);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.2s;
+      font-family: 'Nunito', sans-serif; font-size: 0.65rem; font-weight: 800;
+      color: white; gap: 4px;
+    }
+    .avatar-wrap:hover .avatar-edit-overlay { opacity: 1; }
+    #avatar-input { display: none; }
+
+    /* ── RANK BADGE ── */
+    .rank-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 12px; border-radius: 999px;
+      font-family: 'Nunito', sans-serif; font-size: 0.72rem; font-weight: 800;
+      background: rgba(255,209,102,0.15);
+      border: 1px solid rgba(255,209,102,0.35);
+      color: var(--yellow);
+    }
+
+    /* ── STAT GRID ── */
+    .stat-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+      margin-top: 16px;
+    }
+    .stat-cell {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px; padding: 10px 6px; text-align: center;
+    }
+    .stat-val {
+      font-family: 'Luckiest Guy', cursive;
+      font-size: 1.3rem; letter-spacing: 0.5px; display: block;
+    }
+    .stat-lbl {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.6rem; font-weight: 800;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--t-muted); display: block; margin-top: 2px;
+    }
+
+    /* ── XP BAR ── */
+    .xp-wrap { height: 6px; background: rgba(255,255,255,0.1); border-radius: 999px; overflow: hidden; margin-top: 12px; }
+    .xp-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--g-light), var(--yellow)); transition: width 1s ease; }
+
+    /* ── FORM ── */
+    .form-input {
+      width: 100%; padding: 10px 14px;
+      background: rgba(255,255,255,0.07);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      font-family: 'Quicksand', sans-serif; font-size: 0.88rem; font-weight: 600;
+      color: var(--t-light); outline: none;
+      transition: border-color 0.15s;
+      margin-bottom: 10px;
+    }
+    .form-input::placeholder { color: var(--t-muted); }
+    .form-input:focus { border-color: var(--g-light); }
+    textarea.form-input { resize: vertical; min-height: 80px; }
+
+    .form-label {
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.72rem; font-weight: 800;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--t-muted); display: block; margin-bottom: 5px;
+    }
+
+    .btn-save {
+      width: 100%; padding: 11px;
+      background: linear-gradient(135deg, var(--g-deep), var(--g-mid));
+      border: none; border-radius: 14px;
+      font-family: 'Luckiest Guy', cursive; font-size: 0.95rem; letter-spacing: 1px;
+      color: white; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(45,106,79,0.4);
+      transition: all 0.18s;
+    }
+    .btn-save:hover { transform: scale(1.03); box-shadow: 0 6px 22px rgba(45,106,79,0.55); }
+    .btn-save:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    /* ── FAVORITE UNIT PICKER ── */
+    .unit-grid {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;
+    }
+    .unit-chip {
+      padding: 6px 12px; border-radius: 10px;
+      font-size: 0.85rem; cursor: pointer; transition: all 0.15s;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.1);
+      font-family: 'Nunito', sans-serif; font-weight: 700;
+    }
+    .unit-chip:hover { background: rgba(82,183,136,0.15); border-color: var(--g-light); }
+    .unit-chip.selected { background: rgba(82,183,136,0.2); border-color: var(--g-light); color: var(--g-light); }
+
+    /* ── MATCH HISTORY ── */
+    .match-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px; border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 8px;
+      transition: background 0.15s;
+    }
+    .match-row:hover { background: rgba(255,255,255,0.07); }
+    .result-badge {
+      width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Luckiest Guy', cursive; font-size: 0.72rem;
+    }
+    .result-badge.win  { background: rgba(82,183,136,0.2); color: var(--g-light); border: 1px solid rgba(82,183,136,0.35); }
+    .result-badge.loss { background: rgba(230,57,70,0.2); color: #ff6b78; border: 1px solid rgba(230,57,70,0.35); }
+    .result-badge.draw { background: rgba(251,133,0,0.15); color: var(--orange); border: 1px solid rgba(251,133,0,0.3); }
+    .match-info { flex: 1; min-width: 0; }
+    .match-title { font-family: 'Nunito', sans-serif; font-size: 0.82rem; font-weight: 700; }
+    .match-meta  { font-family: 'Nunito', sans-serif; font-size: 0.68rem; color: var(--t-muted); margin-top: 1px; }
+    .match-elo {
+      font-family: 'Luckiest Guy', cursive; font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+    .match-elo.pos { color: var(--g-light); }
+    .match-elo.neg { color: #ff6b78; }
+    .mode-pill {
+      padding: 2px 8px; border-radius: 999px;
+      font-family: 'Nunito', sans-serif; font-size: 0.62rem; font-weight: 800;
+      flex-shrink: 0;
+    }
+    .mode-pill.ai     { background: rgba(82,183,136,0.15); color: var(--g-light); }
+    .mode-pill.casual { background: rgba(255,209,102,0.15); color: var(--yellow); }
+    .mode-pill.ranked { background: rgba(123,44,191,0.18); color: #c77dff; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center; padding: 40px 20px;
+      font-family: 'Nunito', sans-serif; font-size: 0.88rem;
+      color: var(--t-muted); font-weight: 700;
+    }
+
+    /* ── TOAST ── */
+    #toast-cont {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      z-index: 9999; display: flex; flex-direction: column; gap: 8px;
+    }
+    .p-toast {
+      padding: 11px 16px; border-radius: 14px;
+      background: rgba(22,33,62,0.95);
+      font-family: 'Nunito', sans-serif; font-size: 0.8rem; font-weight: 700;
+      display: flex; align-items: center; gap: 8px;
+      border: 1.5px solid; max-width: 260px;
+      animation: tIn 0.25s ease forwards;
+    }
+    .p-toast.s { border-color: var(--g-light); color: var(--g-light); }
+    .p-toast.e { border-color: var(--red); color: #ff6b78; }
+    .p-toast.i { border-color: var(--yellow); color: var(--yellow); }
+    @keyframes tIn  { from { opacity:0; transform:translateX(30px); } to { opacity:1; transform:translateX(0); } }
+    @keyframes tOut { from { opacity:1; } to { opacity:0; } }
+
+    /* ── SPINNER ── */
+    .spinner {
+      display: inline-block; width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,0.2);
+      border-top-color: white; border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── UPLOAD PROGRESS ── */
+    .upload-progress {
+      height: 4px; background: rgba(255,255,255,0.1);
+      border-radius: 999px; overflow: hidden; margin-top: 8px; display: none;
+    }
+    .upload-fill {
+      height: 100%; background: var(--g-light);
+      border-radius: 999px; width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 999px; }
+  </style>
+</head>
+<body>
+
+<!-- BG particles (injected by JS) -->
+<div id="bg-particles"></div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-logo">🌻 VERDANT SIEGE</div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <button class="nav-btn" onclick="window.location.href='./lobby.html'">
+      <i class="fa fa-arrow-left"></i> Lobby
+    </button>
+    <button class="nav-btn" onclick="logout()" style="color:#ff6b78;border-color:rgba(230,57,70,0.3)">
+      <i class="fa fa-right-from-bracket"></i> Sign Out
+    </button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- ═══ LEFT COLUMN ═══ -->
+  <div style="display:flex;flex-direction:column;gap:16px">
+
+    <!-- Profile card -->
+    <div class="glass p-6">
+      <p class="eyebrow">Your Profile</p>
+
+      <!-- Avatar -->
+      <div class="avatar-wrap" onclick="document.getElementById('avatar-input').click()">
+        <div class="avatar-img" id="avatar-display">🌻</div>
+        <div class="avatar-edit-overlay">
+          <i class="fa fa-camera" style="font-size:1.2rem"></i>
+          <span>Change Photo</span>
+        </div>
+      </div>
+      <input type="file" id="avatar-input" accept="image/jpeg,image/png,image/webp,image/gif" onchange="uploadAvatar(this)" />
+      <div class="upload-progress" id="upload-progress">
+        <div class="upload-fill" id="upload-fill"></div>
+      </div>
+
+      <!-- Name + rank -->
+      <div style="text-align:center;margin-top:12px">
+        <h2 class="fg" id="display-name" style="font-size:1.4rem;letter-spacing:1px;color:var(--t-light)">—</h2>
+        <p id="username-tag" class="fn" style="font-size:0.75rem;color:var(--t-muted);font-weight:700;margin:3px 0 8px">@—</p>
+        <div class="rank-badge" id="rank-badge">⚔️ Loading...</div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stat-grid">
+        <div class="stat-cell">
+          <span class="stat-val" id="stat-elo" style="color:var(--yellow)">—</span>
+          <span class="stat-lbl">ELO</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-val" id="stat-wins" style="color:var(--g-light)">—</span>
+          <span class="stat-lbl">Wins</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-val" id="stat-losses" style="color:#ff6b78">—</span>
+          <span class="stat-lbl">Losses</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-val" id="stat-wr" style="color:var(--yellow)">—</span>
+          <span class="stat-lbl">Win Rate</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-val" id="stat-streak" style="color:var(--orange)">—</span>
+          <span class="stat-lbl">Streak</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-val" id="stat-rank" style="color:#c77dff">—</span>
+          <span class="stat-lbl">Rank #</span>
+        </div>
+      </div>
+
+      <!-- XP / level -->
+      <div style="display:flex;justify-content:space-between;margin-top:14px;margin-bottom:4px">
+        <span class="fn" style="font-size:0.65rem;font-weight:800;color:var(--t-muted)" id="level-label">LVL —</span>
+        <span class="fn" style="font-size:0.65rem;font-weight:800;color:var(--t-muted)" id="coins-label">🪙 —</span>
+      </div>
+      <div class="xp-wrap"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+
+      <!-- Member since -->
+      <p class="fn" style="font-size:0.65rem;color:var(--t-muted);font-weight:700;text-align:center;margin-top:10px" id="member-since">
+        Member since —
+      </p>
+    </div>
+
+    <!-- Edit profile -->
+    <div class="glass p-6">
+      <p class="eyebrow">Edit Profile</p>
+
+      <label class="form-label">Display Name</label>
+      <input type="text" class="form-input" id="edit-display-name" placeholder="Your display name" maxlength="50" />
+
+      <label class="form-label">Bio</label>
+      <textarea class="form-input" id="edit-bio" placeholder="Tell the garden about yourself..." maxlength="300"></textarea>
+
+      <label class="form-label">Favorite Unit</label>
+      <div class="unit-grid" id="unit-picker">
+        <div class="unit-chip" data-unit="peashooter"  onclick="selectUnit(this)">🌱 Peashooter</div>
+        <div class="unit-chip" data-unit="sunflower"   onclick="selectUnit(this)">🌻 Sunflower</div>
+        <div class="unit-chip" data-unit="wallnut"     onclick="selectUnit(this)">🪨 Wall-nut</div>
+        <div class="unit-chip" data-unit="chomper"     onclick="selectUnit(this)">🌿 Chomper</div>
+        <div class="unit-chip" data-unit="snowpea"     onclick="selectUnit(this)">❄️ Snow Pea</div>
+        <div class="unit-chip" data-unit="cherrybomb"  onclick="selectUnit(this)">🍒 Cherry Bomb</div>
+      </div>
+
+      <button class="btn-save" id="save-btn" onclick="saveProfile()">
+        🌿 SAVE CHANGES
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ═══ RIGHT COLUMN ═══ -->
+  <div style="display:flex;flex-direction:column;gap:16px">
+
+    <!-- Match history -->
+    <div class="glass p-6">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <p class="eyebrow" style="margin:0">⚔️ Match History</p>
+        <span class="fn" style="font-size:0.72rem;font-weight:800;color:var(--t-muted)" id="history-count">Last 10 games</span>
+      </div>
+      <div id="match-history-list">
+        <div class="empty-state">
+          <div style="font-size:2.5rem;margin-bottom:10px">🌱</div>
+          <p>No matches yet — go play!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Economy -->
+    <div class="glass-green p-6">
+      <p class="eyebrow">💰 Economy</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="stat-cell">
+          <span class="stat-val" id="eco-coins" style="color:var(--yellow)">—</span>
+          <span class="stat-lbl">🪙 Coins</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-val" id="eco-gems" style="color:#c77dff">—</span>
+          <span class="stat-lbl">💎 Gems</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-val" id="eco-total-matches" style="color:var(--t-light)">—</span>
+          <span class="stat-lbl">Total Matches</span>
+        </div>
+        <div class="stat-cell">
+          <span class="stat-val" id="eco-best-streak" style="color:var(--orange)">—</span>
+          <span class="stat-lbl">Best Streak</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div id="toast-cont"></div>
+
+<script>
+// ══════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════
+const API      = 'http://localhost/verdant-siege/backend/api/UserProfile.php';
+const AUTH_API = 'http://localhost/verdant-siege/backend/api/Auth.php';
+const token    = sessionStorage.getItem('auth_token');
+
+let profile = null;
+let selectedUnit = null;
+
+// ══════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  if (!token) { window.location.href = './login.html'; return; }
+  buildBgParticles();
+  loadProfile();
+});
+
+// ══════════════════════════════════════════════════
+// LOAD PROFILE
+// ══════════════════════════════════════════════════
+async function loadProfile() {
+  try {
+    const res  = await fetch(`${API}?action=profile&token=${token}`);
+    const data = await res.json();
+    if (!data.success) { pToast('e', data.error || 'Failed to load profile'); return; }
+
+    profile = data.profile;
+    renderProfile(profile);
+    renderHistory(data.match_history);
+  } catch (err) {
+    pToast('e', '🧟 Could not load profile');
+  }
+}
+
+// ══════════════════════════════════════════════════
+// RENDER PROFILE
+// ══════════════════════════════════════════════════
+function renderProfile(p) {
+  // Avatar
+  const avatarEl = document.getElementById('avatar-display');
+  if (p.avatar_url) {
+    avatarEl.innerHTML = `<img src="${p.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover" onerror="this.parentElement.textContent='🌻'" />`;
+  } else {
+    avatarEl.textContent = '🌻';
+  }
+
+  // Name + username
+  setEl('display-name', p.display_name || p.username);
+  setEl('username-tag', '@' + p.username);
+
+  // Rank badge
+  const rankLabel = eloToRank(p.elo_rating);
+  setEl('rank-badge', `⚔️ ${rankLabel}`);
+
+  // Stats
+  setEl('stat-elo',    p.elo_rating);
+  setEl('stat-wins',   p.wins);
+  setEl('stat-losses', p.losses);
+  setEl('stat-wr',     p.win_rate + '%');
+  const streak = p.current_streak;
+  setEl('stat-streak', streak > 0 ? `+${streak}🔥` : streak < 0 ? `${streak}💀` : '0');
+  setEl('stat-rank',   '#' + p.rank_position);
+
+  // Level (ELO-based)
+  const level = Math.floor(p.elo_rating / 100);
+  const xpPct = ((p.elo_rating % 100) / 100) * 100;
+  setEl('level-label', `LVL ${level}`);
+  setEl('coins-label', `🪙 ${p.coins.toLocaleString()}`);
+  setTimeout(() => {
+    document.getElementById('xp-fill').style.width = xpPct + '%';
+  }, 300);
+
+  // Economy
+  setEl('eco-coins',        p.coins.toLocaleString());
+  setEl('eco-gems',         p.gems);
+  setEl('eco-total-matches',p.total_matches);
+  setEl('eco-best-streak',  p.best_streak);
+
+  // Member since
+  const date = new Date(p.created_at);
+  setEl('member-since', `Member since ${date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`);
+
+  // Populate edit form
+  document.getElementById('edit-display-name').value = p.display_name || '';
+  document.getElementById('edit-bio').value           = p.bio || '';
+
+  // Favorite unit
+  if (p.favorite_unit) {
+    selectedUnit = p.favorite_unit;
+    document.querySelectorAll('.unit-chip').forEach(el => {
+      el.classList.toggle('selected', el.dataset.unit === p.favorite_unit);
+    });
+  }
+}
+
+// ══════════════════════════════════════════════════
+// RENDER MATCH HISTORY
+// ══════════════════════════════════════════════════
+function renderHistory(history) {
+  const cont = document.getElementById('match-history-list');
+  setEl('history-count', `Last ${history.length} game${history.length !== 1 ? 's' : ''}`);
+
+  if (!history || history.length === 0) {
+    cont.innerHTML = `
+      <div class="empty-state">
+        <div style="font-size:2.5rem;margin-bottom:10px">🌱</div>
+        <p>No matches yet — go play!</p>
+      </div>`;
+    return;
+  }
+
+  cont.innerHTML = '';
+  history.forEach(m => {
+    const eloSign  = m.elo_change >= 0 ? '+' : '';
+    const eloClass = m.elo_change >= 0 ? 'pos' : 'neg';
+    const modeLabel = m.mode === 'ai' ? 'VS AI' : m.mode;
+    const date = new Date(m.played_at);
+    const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const duration = m.duration_secs ? formatDuration(m.duration_secs) : '—';
+    const opponent = m.opponent_username ? `vs ${m.opponent_username}` : `Wave ${m.wave_reached ?? '?'}`;
+
+    const el = document.createElement('div');
+    el.className = 'match-row';
+    el.innerHTML = `
+      <div class="result-badge ${m.result}">${m.result.toUpperCase()}</div>
+      <div class="match-info">
+        <p class="match-title">${opponent}</p>
+        <p class="match-meta">${dateStr} · ${duration}</p>
+      </div>
+      <span class="mode-pill ${m.mode}">${modeLabel}</span>
+      <span class="match-elo ${eloClass}">${eloSign}${m.elo_change}</span>
+    `;
+    cont.appendChild(el);
+  });
+}
+
+// ══════════════════════════════════════════════════
+// SAVE PROFILE
+// ══════════════════════════════════════════════════
+async function saveProfile() {
+  const btn = document.getElementById('save-btn');
+  btn.innerHTML = '<span class="spinner"></span>';
+  btn.disabled  = true;
+
+  try {
+    const res = await fetch(`${API}?token=${token}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action:        'update_bio',
+        display_name:  document.getElementById('edit-display-name').value.trim(),
+        bio:           document.getElementById('edit-bio').value.trim(),
+        favorite_unit: selectedUnit,
+        token,
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      pToast('s', '🌻 Profile updated!');
+      loadProfile(); // refresh
+    } else {
+      pToast('e', data.error || 'Update failed');
+    }
+  } catch (err) {
+    pToast('e', '🧟 Connection error');
+  } finally {
+    btn.innerHTML = '🌿 SAVE CHANGES';
+    btn.disabled  = false;
+  }
+}
+
+// ══════════════════════════════════════════════════
+// AVATAR UPLOAD
+// ══════════════════════════════════════════════════
+async function uploadAvatar(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  if (file.size > 2 * 1024 * 1024) { pToast('e', '❌ Max file size is 2MB'); return; }
+
+  const progress = document.getElementById('upload-progress');
+  const fill     = document.getElementById('upload-fill');
+  progress.style.display = 'block';
+  fill.style.width = '30%';
+
+  const formData = new FormData();
+  formData.append('avatar', file);
+  formData.append('token',  token);
+
+  try {
+    fill.style.width = '60%';
+    const res  = await fetch(`${API}?action=upload_avatar&token=${token}`, {
+      method: 'POST',
+      body:   formData,
+    });
+    fill.style.width = '90%';
+    const data = await res.json();
+
+    if (data.success) {
+      fill.style.width = '100%';
+      pToast('s', '🌻 Avatar updated!');
+      // Update avatar display immediately
+      const avatarEl = document.getElementById('avatar-display');
+      avatarEl.innerHTML = `<img src="${data.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover" />`;
+      setTimeout(() => { progress.style.display = 'none'; fill.style.width = '0%'; }, 600);
+    } else {
+      pToast('e', data.error || 'Upload failed');
+      progress.style.display = 'none'; fill.style.width = '0%';
+    }
+  } catch (err) {
+    pToast('e', '🧟 Upload failed');
+    progress.style.display = 'none'; fill.style.width = '0%';
+  }
+
+  input.value = ''; // reset input
+}
+
+// ══════════════════════════════════════════════════
+// UNIT PICKER
+// ══════════════════════════════════════════════════
+function selectUnit(el) {
+  document.querySelectorAll('.unit-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedUnit = el.dataset.unit;
+}
+
+// ══════════════════════════════════════════════════
+// LOGOUT
+// ══════════════════════════════════════════════════
+async function logout() {
+  try {
+    await fetch(`${AUTH_API}?action=logout&token=${token}`, { method: 'POST' });
+  } catch (_) {}
+  sessionStorage.clear();
+  localStorage.removeItem('auth_token');
+  window.location.href = './login.html';
+}
+
+// ══════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════
+function eloToRank(elo) {
+  if (elo >= 2400) return '🏆 Grandmaster';
+  if (elo >= 2000) return '💎 Diamond';
+  if (elo >= 1700) return '🥇 Platinum';
+  if (elo >= 1400) return '🥈 Gold';
+  if (elo >= 1200) return '🥉 Silver';
+  if (elo >= 1000) return '🌿 Bronze';
+  return '🌱 Seed';
+}
+
+function formatDuration(secs) {
+  if (secs < 60) return `${secs}s`;
+  return `${Math.floor(secs / 60)}m ${secs % 60}s`;
+}
+
+function setEl(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+function pToast(type, msg) {
+  const icons = { s: '🌱', e: '💀', i: '🌻' };
+  const cont  = document.getElementById('toast-cont');
+  const el    = document.createElement('div');
+  el.className = `p-toast ${type}`;
+  el.innerHTML = `<span>${icons[type]}</span><span>${msg}</span>`;
+  cont.appendChild(el);
+  setTimeout(() => { el.style.animation = 'tOut 0.25s ease forwards'; setTimeout(() => el.remove(), 260); }, 3000);
+}
+
+function buildBgParticles() {
+  const cont   = document.getElementById('bg-particles');
+  const colors = ['#2d6a4f','#7b2cbf','#ffd166','#52b788'];
+  for (let i = 0; i < 18; i++) {
+    const el   = document.createElement('div');
+    const size = Math.random() * 120 + 40;
+    el.className = 'bp';
+    el.style.cssText = `
+      left:${Math.random()*100}%; width:${size}px; height:${size}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration:${Math.random()*20+18}s;
+      animation-delay:-${Math.random()*20}s;
+    `;
+    cont.appendChild(el);
+  }
+}
+</script>
+</body>
+</html>

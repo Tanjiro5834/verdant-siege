@@ -1,0 +1,23 @@
+{
+    "match_id": "b92fad45-7fe2-4b1f-9242-df28836abb84",
+    "mode": "casual",
+    "status": "expired",
+    "plant_player": {
+        "user_id": 1,
+        "username": "PlantMaster",
+        "elo": 1200
+    },
+    "zombie_player": {
+        "user_id": 3,
+        "username": "ZombieKing",
+        "elo": 1200
+    },
+    "confirmed": {
+        "plants": true,
+        "zombies": true
+    },
+    "created_at": 1781532571,
+    "started_at": 1781532575,
+    "ended_at": null,
+    "winner": null
+}
